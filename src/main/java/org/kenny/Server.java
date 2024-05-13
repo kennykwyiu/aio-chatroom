@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.CompletionHandler;
 
 public class Server {
 
@@ -37,6 +38,19 @@ public class Server {
             throw new RuntimeException(e);
         } finally {
             close(serverChannel);
+        }
+    }
+
+    private class AcceptHandler implements CompletionHandler<AsynchronousServerSocketChannel, Object> {
+
+        @Override
+        public void completed(AsynchronousServerSocketChannel result, Object attachment) {
+
+        }
+
+        @Override
+        public void failed(Throwable exc, Object attachment) {
+
         }
     }
 }
