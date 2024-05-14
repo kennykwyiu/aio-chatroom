@@ -82,12 +82,20 @@ public class Server {
 
         @Override
         public void completed(Integer result, Object attachment) {
+            Map<String, Object> info = (Map<String, Object>) attachment;
+            String type = (String) info.get("type");
 
+            if ("read".equals(type)) {
+                ByteBuffer buffer = (ByteBuffer) info.get("buffer");
+                buffer.flip();
+                info.put("type", "write");
+                clientChannel.write(buffer, info, this);
+            }
         }
 
         @Override
         public void failed(Throwable exc, Object attachment) {
-
+            System.out.println("Write failed" + exc);
         }
     }
 }
