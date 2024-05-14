@@ -3,8 +3,12 @@ package org.kenny;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
 
@@ -41,11 +45,25 @@ public class Server {
         }
     }
 
-    private class AcceptHandler implements CompletionHandler<AsynchronousServerSocketChannel, Object> {
+    private class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Object> {
+
 
         @Override
-        public void completed(AsynchronousServerSocketChannel result, Object attachment) {
+        public void completed(AsynchronousSocketChannel result, Object attachment) {
+            if (serverChannel.isOpen()) {
+                serverChannel.accept(null, this);
+            }
+            AsynchronousSocketChannel clientChannel = result;
+            if (clientChannel != null && clientChannel.isOpen()) {
+                ClientHandler handler = new ClientHandler(clientChannel);
 
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                Map<String, Object> info = new HashMap<>();
+                info.put("type", "read");
+                info.put("buffer", buffer);
+                clientChannel.read(buffer, info, handler);
+
+            }
         }
 
         @Override
