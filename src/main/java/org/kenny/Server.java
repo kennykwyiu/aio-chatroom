@@ -68,6 +68,7 @@ public class Server {
 
         @Override
         public void failed(Throwable exc, Object attachment) {
+            System.out.println("Connect failed" + exc);
 
         }
     }
