@@ -69,6 +69,24 @@ public class Server {
         @Override
         public void failed(Throwable exc, Object attachment) {
             System.out.println("Connect failed" + exc);
+        }
+    }
+
+    private class ClientHandler implements CompletionHandler<Integer, Object> {
+
+        private AsynchronousSocketChannel clientChannel;
+
+        public ClientHandler(AsynchronousSocketChannel channel) {
+            this.clientChannel = channel;
+        }
+
+        @Override
+        public void completed(Integer result, Object attachment) {
+
+        }
+
+        @Override
+        public void failed(Throwable exc, Object attachment) {
 
         }
     }
