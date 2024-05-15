@@ -1,8 +1,14 @@
 package org.kenny;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class Client {
 
@@ -22,6 +28,37 @@ public class Client {
     }
 
     public void start() {
+        // create channel
+        try {
+            clientChannel = AsynchronousSocketChannel.open();
+            Future<Void> future = clientChannel.connect(new InetSocketAddress(LOCALHOST, DEFAULT_PORT));
+            future.get();
 
+            // wait for user input
+            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+            while (true) {
+                String input = consoleReader.readLine();
+
+                byte[] inputBytes = input.getBytes();
+                ByteBuffer bufffer = ByteBuffer.wrap(inputBytes);
+                Future<Integer> writeResult = clientChannel.write(bufffer);
+                writeResult.get();
+
+                bufffer.flip();
+                Future<Integer> readResult = clientChannel.read(bufffer);
+                readResult.get();
+
+                String echo = new String(bufffer.array());
+                bufffer.clear();
+
+                System.out.println(echo);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
