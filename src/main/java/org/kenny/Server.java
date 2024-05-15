@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
@@ -30,6 +31,7 @@ public class Server {
     public void start() {
         try {
             // connect listener port
+            // AsynchronousChannelGroup
             serverChannel = AsynchronousServerSocketChannel.open();
             serverChannel.bind(new InetSocketAddress(LOCALHOST, DEFAULT_PORT));
             System.out.println("Start server, listener port: " + DEFAULT_PORT);
@@ -103,5 +105,10 @@ public class Server {
         public void failed(Throwable exc, Object attachment) {
             System.out.println("Write failed" + exc);
         }
+    }
+
+    public static void main(String[] args) {
+        Server server = new Server();
+        server.start();
     }
 }
