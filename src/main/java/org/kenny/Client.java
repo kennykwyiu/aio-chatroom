@@ -59,6 +59,13 @@ public class Client {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        } finally {
+            close(clientChannel);
         }
+    }
+
+    public static void main(String[] args) {
+        Client client = new Client();
+        client.start();
     }
 }
